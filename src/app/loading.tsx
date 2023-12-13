@@ -1,9 +1,20 @@
-import React from 'react'
+import { FC } from 'react';
+import { Row, Space, Spin } from "antd";
 
-const loading = () => {
+const CustomLoading: FC = () => {
   return (
-    <div>loading...</div>
-  )
-}
+    <Row
+      justify="center"
+      align="middle"
+      style={{
+        height: "100vh",
+      }}
+    >
+      <Space>
+        <Spin tip="Loading" size="large"></Spin>
+      </Space>
+    </Row>
+  );
+};
 
-export default loading
+export default CustomLoading;

@@ -2,12 +2,15 @@ import React, { useState } from "react";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
 import { USER_ROLE } from "@/constants/role";
 import { sidebarItems } from "@/constants/sidebarItems";
+import { getUserInfo } from "@/services/auth.service";
 
 const { Sider } = Layout;
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const role = USER_ROLE.ADMIN;
+//   const role = USER_ROLE.ADMIN;
+  const {role} = getUserInfo() as any;
+//   console.log("first",rolee);
   return (
     <Sider
       collapsible
