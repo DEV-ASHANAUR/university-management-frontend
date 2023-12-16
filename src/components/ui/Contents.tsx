@@ -1,29 +1,20 @@
-"use client"
-import {Layout} from "antd"
-import UMBreadCrumb from "./UMBreadCrumb";
+"use client";
+import { Layout } from "antd";
 import Header from "./Header";
-const {Content} = Layout;
-const Contents = ({children}:{children:React.ReactNode}) => {
-    const base = "admin"
+const { Content } = Layout;
+const Contents = ({ children }: { children: React.ReactNode }) => {
   return (
-    <Content style={{
+    <Content
+      style={{
         minHeight: "100vh",
-        color: "black"
-    }}>
-        <Header />
-        <UMBreadCrumb items={[
-            {
-                label: `${base}`,
-                link: `/${base}`,
-            },
-            {
-                label: "student",
-                link: `/${base}/student`
-            }
-        ]} />
-        {children}
+        color: "black",
+        // paddingLeft:"280px"
+      }}
+    >
+      <Header />
+      <div style={{ padding: "10px" }}>{children}</div>
     </Content>
-  )
-}
+  );
+};
 
-export default Contents
+export default Contents;

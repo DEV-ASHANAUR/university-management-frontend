@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { Breadcrumb, Layout, Menu, theme } from "antd";
-import { USER_ROLE } from "@/constants/role";
+import { Layout, Menu } from "antd";
 import { sidebarItems } from "@/constants/sidebarItems";
 import { getUserInfo } from "@/services/auth.service";
 
@@ -18,9 +17,9 @@ const Sidebar = () => {
       onCollapse={(value) => setCollapsed(value)}
       width={280}
       style={{
-        overflow: "auto",
-        height: "100vh",
-        position: "sticky",
+        overflow: 'auto',
+        height: '100vh',
+        position: 'sticky',
         left: 0,
         top: 0,
         bottom: 0,
@@ -35,6 +34,7 @@ const Sidebar = () => {
           fontWeight: "bold",
           marginBottom: "1rem",
           textTransform: "uppercase",
+          padding: "10px 0px"
         }}
       >
         {collapsed ? "PHU" : "PH-University"}
