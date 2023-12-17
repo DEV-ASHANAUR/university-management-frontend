@@ -12,7 +12,8 @@ import {
   genderOptions,
 } from "@/constants/global";
 import { Row, Col, Button } from "antd";
-import React from "react";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { adminSchema } from "../../../../../../schemas/admin";
 
 const CreateAdminPage = () => {
   const onSubmit = async (data: any) => {
@@ -37,9 +38,9 @@ const CreateAdminPage = () => {
           },
         ]}
       />
-      <h1>Create Admin</h1>
+      <h1 style={{margin:"10px 0"}}>Create Admin</h1>
       <div>
-        <Form submitHandler={onSubmit}>
+        <Form submitHandler={onSubmit} resolver={yupResolver(adminSchema)}>
           <div
             style={{
               border: "1px solid #d9d9d6",
