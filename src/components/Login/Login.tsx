@@ -1,5 +1,5 @@
 "use client";
-import { Col, Row, Button } from "antd";
+import { Col, Row, Button, message } from "antd";
 import loginImage from "../../assets/login-image.png";
 import Image from "next/image";
 import Form from "@/components/Forms/Form";
@@ -22,6 +22,9 @@ const LoginPage = () => {
       const res = await userLogin({ ...data }).unwrap();
       if (res?.accessToken) {
         router.push("/profile");
+        message.success("User logged in successfully!");
+      }else{
+        message.error("Wrong credential!");
       }
       storeUserInfo({ accessToken: res?.accessToken });
     } catch (error:any) {

@@ -3,17 +3,23 @@ import Form from '@/components/Forms/Form';
 import FormInput from '@/components/Forms/FormInput';
 import UMBreadCrumb from '@/components/ui/UMBreadCrumb'
 import { getUserInfo } from '@/services/auth.service'
-import {Row,Col,Button} from 'antd'
+import {Row,Col,Button,message} from 'antd'
 import { departmentSchema } from '../../../../../../schemas/department';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useAddDepartmentMutation } from '@/redux/api/departmentApi';
 
 const CreateDepartmentPage = () => {
+  const [addDepartment] = useAddDepartmentMutation();
   const {role} = getUserInfo() as any;
-  const onSubmit = (data:any)=>{
+
+  const onSubmit = async(data:any)=>{
+    message.loading("creating....");
     try {
-      console.log(data)
-    } catch (error) {
-      console.log(error)
+      await addDepartment(data);
+      message.success("Department added successFully!");
+    } catch (error:any) {
+      console.log(error.message)
+      message.error(error.message);
     }
   }
   return (
