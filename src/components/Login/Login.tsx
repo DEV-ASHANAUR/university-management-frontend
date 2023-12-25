@@ -23,11 +23,11 @@ const LoginPage = () => {
       if (res?.accessToken) {
         router.push("/profile");
         message.success("User logged in successfully!");
-      }else{
+      } else {
         message.error("Wrong credential!");
       }
       storeUserInfo({ accessToken: res?.accessToken });
-    } catch (error:any) {
+    } catch (error: any) {
       console.log(error.message);
     }
   };
@@ -37,6 +37,7 @@ const LoginPage = () => {
         <Image
           src={loginImage}
           width={500}
+          height={500}
           alt="login image"
           style={{ width: "100%" }}
         />

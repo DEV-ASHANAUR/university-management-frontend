@@ -1,4 +1,4 @@
-import React from "react";
+"use client";
 import { Layout, Row, Space, Avatar, Dropdown, MenuProps, Button } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { getUserInfo, removeUserInfo } from "@/services/auth.service";

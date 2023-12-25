@@ -152,7 +152,7 @@ const CreateFacultyPage = () => {
                 marginBottom: "10px",
               }}
             >
-              <UploadImage />
+              <UploadImage name="file" />
             </Col>
           </Row>
         </div>

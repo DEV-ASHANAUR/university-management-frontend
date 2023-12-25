@@ -1,7 +1,6 @@
-import { FC } from 'react';
 import { Row, Space, Spin } from "antd";
 
-const CustomLoading: FC = () => {
+const Loading = () => {
   return (
     <Row
       justify="center"
@@ -17,4 +16,4 @@ const CustomLoading: FC = () => {
   );
 };
 
-export default CustomLoading;
+export default Loading;

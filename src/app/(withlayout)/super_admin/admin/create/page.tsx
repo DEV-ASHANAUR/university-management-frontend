@@ -11,16 +11,50 @@ import {
   departmentOptions,
   genderOptions,
 } from "@/constants/global";
-import { Row, Col, Button } from "antd";
+import { Row, Col, Button, message } from "antd";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { adminSchema } from "../../../../../../schemas/admin";
+import { useDepartmentsQuery } from "@/redux/api/departmentApi";
+import { useAddAdminWithFormDataMutation } from "@/redux/api/adminApi";
 
 const CreateAdminPage = () => {
-  const onSubmit = async (data: any) => {
+  const { data, isLoading } = useDepartmentsQuery({ limit: 100, page: 1 });
+  const [addAdminWithFormData] = useAddAdminWithFormDataMutation();
+
+  //@ts-ignore
+  const departments = data?.departments;
+
+  const departmentOptions =
+    departments &&
+    departments?.map((department: { title: any; id: any }) => {
+      return {
+        label: department?.title,
+        value: department?.id,
+      };
+    });
+    
+  const onSubmit = async (values: any) => {
+    console.log("values",values);
+    const obj = { ...values };
+    const file = obj["file"];
+    delete obj["file"];
+    const data = JSON.stringify(obj);
+    const formData = new FormData();
+    formData.append("file", file as Blob);
+    formData.append("data", data);
+    message.loading("Creating...");
     try {
-      console.log(data);
+      const result:any = await addAdminWithFormData(formData);
+      if(result?.data){
+        message.success("Admin create successFully!");
+      }
+      if(result?.error?.status){
+          message.error(result.error.error)
+      }
+      
     } catch (error: any) {
-      console.log(error.message);
+      console.log("errror is:",error)
+      console.log("error page",error.message);
     }
   };
 
@@ -38,9 +72,9 @@ const CreateAdminPage = () => {
           },
         ]}
       />
-      <h1 style={{margin:"10px 0"}}>Create Admin</h1>
+      <h1 style={{ margin: "10px 0" }}>Create Admin</h1>
       <div>
-        <Form submitHandler={onSubmit} resolver={yupResolver(adminSchema)}>
+        <Form submitHandler={onSubmit}>
           <div
             style={{
               border: "1px solid #d9d9d6",
@@ -152,7 +186,7 @@ const CreateAdminPage = () => {
                   marginBottom: "10px",
                 }}
               >
-                <UploadImage />
+                <UploadImage name="file" />
               </Col>
             </Row>
           </div>

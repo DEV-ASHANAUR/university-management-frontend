@@ -10,7 +10,7 @@ export type ResponseSuccessType = {
 };
 
 export type IGenericErrorResponse = {
-  statusCode: number;
+  status: number;
   message: string;
   errorMessages: IGenericErrorMessage[];
 };
@@ -21,6 +21,7 @@ export type IGenericErrorMessage = {
 };
 
 export interface IDepartment {
+  [x: string]: any;
   id: string;
   title: string;
   createdAt: string;
