@@ -17,6 +17,7 @@ import {
   ReloadOutlined,
 } from "@ant-design/icons";
 import { useDebounce } from "@/redux/hooks";
+import UMModal from "@/components/ui/UMModal";
 
 const ManageDepartmentPage = () => {
   const query: Record<string, any> = {};
@@ -83,7 +84,9 @@ const ManageDepartmentPage = () => {
               </Button>
             </Link>
 
-            <Popconfirm
+            <UMModal id={data?.id} description="Are You sure you want to delete this department?" deleteHandler={deleteHandler} />
+
+            {/* <Popconfirm
               title="Delete the task"
               description="Are you sure to delete this department?"
               icon={<QuestionCircleOutlined style={{ color: "red" }} />}
@@ -92,7 +95,7 @@ const ManageDepartmentPage = () => {
               <Button type="primary" danger>
                 <DeleteOutlined />
               </Button>
-            </Popconfirm>
+            </Popconfirm> */}
           </>
         );
       },

@@ -17,6 +17,7 @@ import {
 import { useDebounce } from "@/redux/hooks";
 import { useAdminsQuery, useDeletAdminMutation } from "@/redux/api/adminApi";
 import { IDepartment } from "@/types";
+import UMModal from "@/components/ui/UMModal";
 
 const AdminPage = () => {
   const query: Record<string, any> = {};
@@ -46,7 +47,6 @@ const AdminPage = () => {
   const meta = data?.meta;
 
   const deleteHandler = async (id: string) => {
-    // console.log("id",id)
     message.loading("Deleting...");
     try {
       await deletAdmin(id);
@@ -98,7 +98,7 @@ const AdminPage = () => {
       render: function (data: any) {
         return (
           <>
-            <Link href={`/super_admin/admin/details/${data.id}`}>
+            <Link href={`/super_admin/admin/details/${data}`}>
               <Button onClick={() => console.log(data)}
                 style={{
                   margin: "0px 5px",
@@ -109,7 +109,7 @@ const AdminPage = () => {
               </Button>
             </Link>
 
-            <Link href={`/super_admin/admin/edit/${data.id}`}>
+            <Link href={`/super_admin/admin/edit/${data}`}>
               <Button
                 style={{
                   margin: "0px 5px",
@@ -120,16 +120,7 @@ const AdminPage = () => {
                 <EditOutlined />
               </Button>
             </Link>
-            <Popconfirm
-              title="Delete the task"
-              description="Are you sure to delete this admin?"
-              icon={<QuestionCircleOutlined style={{ color: "red" }} />}
-              onConfirm={() => deleteHandler(data)}
-            >
-              <Button type="primary" danger>
-                <DeleteOutlined />
-              </Button>
-            </Popconfirm>
+            <UMModal id={data} description="Are You sure you want to delete this Admin?" deleteHandler={deleteHandler} />
           </>
         );
       },
@@ -158,7 +149,7 @@ const AdminPage = () => {
   return (
     <div>
       <UMBreadCrumb items={[{ label: "super_admin", link: "super_admin" }]} />
-      <ActionBar title="Department List">
+      <ActionBar title="Admin List">
         <Input
           type="text"
           size="large"

@@ -5,21 +5,21 @@ import FormInput from "@/components/Forms/FormInput";
 import FormSelectField from "@/components/Forms/FormSelectField";
 import FormTextArea from "@/components/Forms/FormTextArea";
 import UMBreadCrumb from "@/components/ui/UMBreadCrumb";
-import UploadImage from "@/components/ui/UploadImage";
 import {
   bloodGroupOptions,
-  departmentOptions,
   genderOptions,
 } from "@/constants/global";
 import { Row, Col, Button, message } from "antd";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { adminSchema } from "../../../../../../schemas/admin";
 import { useDepartmentsQuery } from "@/redux/api/departmentApi";
-import { useAddAdminWithFormDataMutation } from "@/redux/api/adminApi";
+import { useAdminQuery, useUpdateAdminMutation } from "@/redux/api/adminApi";
 
-const CreateAdminPage = () => {
-  const { data, isLoading } = useDepartmentsQuery({ limit: 100, page: 1 });
-  const [addAdminWithFormData] = useAddAdminWithFormDataMutation();
+const EditAdminPage = ({params}:any) => {
+
+  const {data:adminData,isLoading:loading} = useAdminQuery(params?.id);
+
+  const [updateAdmin] = useUpdateAdminMutation();
+
+  const { data } = useDepartmentsQuery({ limit: 100, page: 1 });
 
   //@ts-ignore
   const departments = data?.departments;
@@ -33,20 +33,13 @@ const CreateAdminPage = () => {
       };
     });
     
-  const onSubmit = async (values: any) => {
-    console.log("values",values);
-    const obj = { ...values };
-    const file = obj["file"];
-    delete obj["file"];
-    const data = JSON.stringify(obj);
-    const formData = new FormData();
-    formData.append("file", file as Blob);
-    formData.append("data", data);
+  const onSubmit = async (value: any) => {
     message.loading("Creating...");
     try {
-      const result:any = await addAdminWithFormData(formData);
-      if(result?.data){
-        message.success("Admin create successFully!");
+      const result:any = await updateAdmin({id:params?.id,body:value}).unwrap();
+      
+      if(result?.id){
+        message.success("Admin edited successFully!");
       }
       if(result?.error?.status){
           message.error(result.error.error)
@@ -56,7 +49,27 @@ const CreateAdminPage = () => {
       console.log("errror is:",error)
       console.log("error page",error.message);
     }
+
   };
+
+  const defaultValues = {
+    name: {
+        firstName: adminData?.name?.firstName || "",
+        lastName: adminData?.name?.lastName || "",
+        middleName: adminData?.name?.middleName || "",
+        },
+        dateOfBirth: adminData?.dateOfBirth || "",
+        email: adminData?.email || "",
+        designation: adminData?.designation || "",
+        contactNo: adminData?.contactNo || "",
+        emergencyContactNo: adminData?.emergencyContactNo || "",
+        permanentAddress: adminData?.permanentAddress || "",
+        presentAddress: adminData?.presentAddress || "",
+        bloodGroup: adminData?.bloodGroup || "",
+        gender: adminData?.gender || "",
+        managementDepartment: adminData?.managementDepartment?.id || "",
+
+    }
 
   return (
     <div>
@@ -72,9 +85,9 @@ const CreateAdminPage = () => {
           },
         ]}
       />
-      <h1 style={{ margin: "10px 0" }}>Create Admin</h1>
+      <h1 style={{ margin: "10px 0" }}>Edit Admin</h1>
       <div>
-        <Form submitHandler={onSubmit} resolver={yupResolver(adminSchema)}>
+        <Form submitHandler={onSubmit} defaultValues={defaultValues}>
           <div
             style={{
               border: "1px solid #d9d9d6",
@@ -101,7 +114,7 @@ const CreateAdminPage = () => {
               >
                 <FormInput
                   type="text"
-                  name="admin.name.firstName"
+                  name="name.firstName"
                   size="large"
                   label="First Name"
                 />
@@ -115,7 +128,7 @@ const CreateAdminPage = () => {
               >
                 <FormInput
                   type="text"
-                  name="admin.name.middleName"
+                  name="name.middleName"
                   size="large"
                   label="Middle Name"
                 />
@@ -129,25 +142,12 @@ const CreateAdminPage = () => {
               >
                 <FormInput
                   type="text"
-                  name="admin.name.lastName"
+                  name="name.lastName"
                   size="large"
                   label="Last Name"
                 />
               </Col>
-              <Col
-                className="gutter-row"
-                span={8}
-                style={{
-                  marginBottom: "10px",
-                }}
-              >
-                <FormInput
-                  type="password"
-                  name="password"
-                  size="large"
-                  label="Password"
-                />
-              </Col>
+              
               <Col
                 className="gutter-row"
                 span={8}
@@ -157,7 +157,7 @@ const CreateAdminPage = () => {
               >
                 <FormSelectField
                   size="large"
-                  name="admin.gender"
+                  name="gender"
                   options={genderOptions}
                   label="Gender"
                   placeholder="Select"
@@ -172,21 +172,11 @@ const CreateAdminPage = () => {
               >
                 <FormSelectField
                   size="large"
-                  name="admin.managementDepartment"
+                  name="managementDepartment"
                   options={departmentOptions}
                   label="Department"
                   placeholder="Select"
                 />
-              </Col>
-
-              <Col
-                className="gutter-row"
-                span={8}
-                style={{
-                  marginBottom: "10px",
-                }}
-              >
-                <UploadImage name="file" />
               </Col>
             </Row>
           </div>
@@ -217,7 +207,7 @@ const CreateAdminPage = () => {
               >
                 <FormInput
                   type="email"
-                  name="admin.email"
+                  name="email"
                   size="large"
                   label="Email address"
                 />
@@ -231,7 +221,7 @@ const CreateAdminPage = () => {
               >
                 <FormInput
                   type="text"
-                  name="admin.contactNo"
+                  name="contactNo"
                   size="large"
                   label="Contact No."
                 />
@@ -245,7 +235,7 @@ const CreateAdminPage = () => {
               >
                 <FormInput
                   type="text"
-                  name="admin.emergencyContactNo"
+                  name="emergencyContactNo"
                   size="large"
                   label="Emergency Contact No."
                 />
@@ -258,7 +248,7 @@ const CreateAdminPage = () => {
                 }}
               >
                 <FormDatePicker
-                  name="admin.dateOfBirth"
+                  name="dateOfBirth"
                   size="large"
                   label="Date of Birth"
                 />
@@ -272,7 +262,7 @@ const CreateAdminPage = () => {
               >
                 <FormSelectField
                   size="large"
-                  name="admin.bloodGroup"
+                  name="bloodGroup"
                   options={bloodGroupOptions}
                   label="Blood group"
                   placeholder="Select"
@@ -288,7 +278,7 @@ const CreateAdminPage = () => {
                 <FormInput
                   type="text"
                   size="large"
-                  name="admin.designation"
+                  name="designation"
                   label="Designation"
                 />
               </Col>
@@ -301,7 +291,7 @@ const CreateAdminPage = () => {
               >
                 <FormTextArea
                   size="large"
-                  name="admin.presentAddress"
+                  name="presentAddress"
                   label="Present Address"
                   rows={4}
                 />
@@ -316,7 +306,7 @@ const CreateAdminPage = () => {
               >
                 <FormTextArea
                   size="large"
-                  name="admin.permanentAddress"
+                  name="permanentAddress"
                   label="Permanent Address"
                   rows={4}
                 />
@@ -332,4 +322,4 @@ const CreateAdminPage = () => {
   );
 };
 
-export default CreateAdminPage;
+export default EditAdminPage;

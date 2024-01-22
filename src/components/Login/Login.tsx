@@ -19,7 +19,7 @@ const LoginPage = () => {
   const router = useRouter();
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     try {
-      const res = await userLogin({ ...data }).unwrap();
+      const res:any = await userLogin({ ...data }).unwrap();
       if (res?.accessToken) {
         router.push("/profile");
         message.success("User logged in successfully!");
@@ -28,7 +28,8 @@ const LoginPage = () => {
       }
       storeUserInfo({ accessToken: res?.accessToken });
     } catch (error: any) {
-      console.log(error.message);
+      // console.log(error);
+      message.error("Wrong credential!");
     }
   };
   return (

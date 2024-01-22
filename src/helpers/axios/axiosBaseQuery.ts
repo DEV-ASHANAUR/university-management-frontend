@@ -31,9 +31,12 @@ export const axiosBaseQuery =
         },
         // withCredentials: true,
       });
+      // console.log("result",result)
       return result;
     } catch (axiosError) {
+      
       let err = axiosError as AxiosError;
+      console.log("errrr",err)
       return {
         error: {
           status: err.status,

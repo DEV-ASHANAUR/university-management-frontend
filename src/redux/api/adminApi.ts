@@ -4,7 +4,7 @@ import { tagTypes } from "../tag-types";
 
 const ADMIN_URL = "/admins";
 
-export const adminApi = baseApi.injectEndpoints({
+export const adminApi:any = baseApi.injectEndpoints({
   endpoints: (build) => ({
     addAdminWithFormData: build.mutation({
       query: (data) => ({
@@ -32,6 +32,21 @@ export const adminApi = baseApi.injectEndpoints({
       },
       providesTags: [tagTypes.admin],
     }),
+    admin: build.query({
+      query: (id:string | string[] | undefined) => ({
+        url:`${ADMIN_URL}/${id}`,
+        method: "GET"
+      }),
+      providesTags:[tagTypes.admin],
+    }),
+    updateAdmin: build.mutation({
+      query: (data) => ({
+        url: `${ADMIN_URL}/${data?.id}`,
+        method: "PATCH",
+        data:data.body,
+      }),
+      invalidatesTags:[tagTypes.admin]
+    }),
     deletAdmin: build.mutation({
       query: (id:string) => ({
         url: `${ADMIN_URL}/${id}`,
@@ -42,4 +57,4 @@ export const adminApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useAdminsQuery, useAddAdminWithFormDataMutation,useDeletAdminMutation } = adminApi;
+export const { useAdminsQuery,useAdminQuery,useAddAdminWithFormDataMutation,useDeletAdminMutation,useUpdateAdminMutation } = adminApi;
