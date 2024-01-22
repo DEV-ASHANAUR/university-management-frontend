@@ -5,17 +5,13 @@ import FormInput from "@/components/Forms/FormInput";
 import FormSelectField from "@/components/Forms/FormSelectField";
 import FormTextArea from "@/components/Forms/FormTextArea";
 import UMBreadCrumb from "@/components/ui/UMBreadCrumb";
-import {
-  bloodGroupOptions,
-  genderOptions,
-} from "@/constants/global";
+import { bloodGroupOptions, genderOptions } from "@/constants/global";
 import { Row, Col, Button, message } from "antd";
 import { useDepartmentsQuery } from "@/redux/api/departmentApi";
 import { useAdminQuery, useUpdateAdminMutation } from "@/redux/api/adminApi";
 
-const EditAdminPage = ({params}:any) => {
-
-  const {data:adminData,isLoading:loading} = useAdminQuery(params?.id);
+const EditAdminPage = ({ params }: any) => {
+  const { data: adminData, isLoading: loading } = useAdminQuery(params?.id);
 
   const [updateAdmin] = useUpdateAdminMutation();
 
@@ -32,44 +28,44 @@ const EditAdminPage = ({params}:any) => {
         value: department?.id,
       };
     });
-    
+
   const onSubmit = async (value: any) => {
     message.loading("Creating...");
     try {
-      const result:any = await updateAdmin({id:params?.id,body:value}).unwrap();
-      
-      if(result?.id){
+      const result: any = await updateAdmin({
+        id: params?.id,
+        body: value,
+      }).unwrap();
+
+      if (result?.id) {
         message.success("Admin edited successFully!");
       }
-      if(result?.error?.status){
-          message.error(result.error.error)
+      if (result?.error?.status) {
+        message.error(result.error.error);
       }
-      
     } catch (error: any) {
-      console.log("errror is:",error)
-      console.log("error page",error.message);
+      console.log("errror is:", error);
+      console.log("error page", error.message);
     }
-
   };
 
   const defaultValues = {
     name: {
-        firstName: adminData?.name?.firstName || "",
-        lastName: adminData?.name?.lastName || "",
-        middleName: adminData?.name?.middleName || "",
-        },
-        dateOfBirth: adminData?.dateOfBirth || "",
-        email: adminData?.email || "",
-        designation: adminData?.designation || "",
-        contactNo: adminData?.contactNo || "",
-        emergencyContactNo: adminData?.emergencyContactNo || "",
-        permanentAddress: adminData?.permanentAddress || "",
-        presentAddress: adminData?.presentAddress || "",
-        bloodGroup: adminData?.bloodGroup || "",
-        gender: adminData?.gender || "",
-        managementDepartment: adminData?.managementDepartment?.id || "",
-
-    }
+      firstName: adminData?.name?.firstName || "",
+      lastName: adminData?.name?.lastName || "",
+      middleName: adminData?.name?.middleName || "",
+    },
+    dateOfBirth: adminData?.dateOfBirth || "",
+    email: adminData?.email || "",
+    designation: adminData?.designation || "",
+    contactNo: adminData?.contactNo || "",
+    emergencyContactNo: adminData?.emergencyContactNo || "",
+    permanentAddress: adminData?.permanentAddress || "",
+    presentAddress: adminData?.presentAddress || "",
+    bloodGroup: adminData?.bloodGroup || "",
+    gender: adminData?.gender || "",
+    managementDepartment: adminData?.managementDepartment?.id || "",
+  };
 
   return (
     <div>
@@ -147,7 +143,7 @@ const EditAdminPage = ({params}:any) => {
                   label="Last Name"
                 />
               </Col>
-              
+
               <Col
                 className="gutter-row"
                 span={8}
@@ -314,7 +310,7 @@ const EditAdminPage = ({params}:any) => {
             </Row>
           </div>
           <Button htmlType="submit" type="primary">
-            Create
+            Update
           </Button>
         </Form>
       </div>

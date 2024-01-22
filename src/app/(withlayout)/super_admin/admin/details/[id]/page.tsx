@@ -36,7 +36,7 @@ const AdminDetails = ({ params }: any) => {
               flexDirection: "column",
               gap: "8px",
               border: "1px solid #ddd",
-              padding: "5px",
+              padding: "10px",
             }}
           >
             <h3>Id: {adminData?.id}</h3>
