@@ -5,10 +5,6 @@ import { Button, Input, message } from "antd";
 import ActionBar from "@/components/ui/ActionBar";
 import UMTable from "@/components/ui/UMTable";
 import { useState } from "react";
-import {
-  useDeleteDepartmentMutation,
-  useDepartmentsQuery,
-} from "@/redux/api/departmentApi";
 import dayjs from "dayjs";
 import {
   EditOutlined,
@@ -16,16 +12,16 @@ import {
 } from "@ant-design/icons";
 import { useDebounce } from "@/redux/hooks";
 import UMModal from "@/components/ui/UMModal";
+import { useAcademicFacultiesQuery, useDeleteAcademicFacultyMutation } from "@/redux/api/academic/facultyApi";
 
-const ManageDepartmentPage = () => {
+const ACFacultyPage = () => {
   const query: Record<string, any> = {};
-
   const [page, setPage] = useState<number>(1);
   const [size, setSize] = useState<number>(10);
   const [sortBy, setSortBy] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [deleteDepartment] = useDeleteDepartmentMutation();
+  const [deleteAcademicFaculty] = useDeleteAcademicFacultyMutation();
 
   query["limit"] = size;
   query["page"] = page;
@@ -37,17 +33,16 @@ const ManageDepartmentPage = () => {
   if (!!debouncedTerm) {
     query["searchTerm"] = debouncedTerm;
   }
+  const { data, isLoading } = useAcademicFacultiesQuery({ ...query });
 
-  const { data, isLoading } = useDepartmentsQuery({ ...query });
-
-  const departments = data?.departments;
+  const academicFaculties = data?.academicFaculties;
   const meta = data?.meta;
 
   const deleteHandler = async (id: string) => {
     message.loading("Deleting...");
     try {
-      await deleteDepartment(id);
-      message.success("Department delete successfully!");
+      await deleteAcademicFaculty(id);
+      message.success("Faculty delete successfully!");
     } catch (error: any) {
       message.error(error.message);
     }
@@ -71,7 +66,7 @@ const ManageDepartmentPage = () => {
       render: function (data: any) {
         return (
           <>
-            <Link href={`/super_admin/department/edit/${data.id}`}>
+            <Link href={`/admin/academic/faculty/edit/${data.id}`}>
               <Button
                 style={{
                   margin: "0px 5px",
@@ -82,18 +77,7 @@ const ManageDepartmentPage = () => {
               </Button>
             </Link>
 
-            <UMModal id={data?.id} description="Are You sure you want to delete this department?" deleteHandler={deleteHandler} />
-
-            {/* <Popconfirm
-              title="Delete the task"
-              description="Are you sure to delete this department?"
-              icon={<QuestionCircleOutlined style={{ color: "red" }} />}
-              onConfirm={() => deleteHandler(data?.id)}
-            >
-              <Button type="primary" danger>
-                <DeleteOutlined />
-              </Button>
-            </Popconfirm> */}
+            <UMModal id={data?.id} description="Are You sure you want to delete this Faculty?" deleteHandler={deleteHandler} />
           </>
         );
       },
@@ -121,8 +105,8 @@ const ManageDepartmentPage = () => {
 
   return (
     <div>
-      <UMBreadCrumb items={[{ label: "super_admin", link: "super_admin" }]} />
-      <ActionBar title="Department List">
+      <UMBreadCrumb items={[{ label: "admin", link: "/admin" }]} />
+      <ActionBar title="Academic Faculty List">
         <Input
           type="text"
           size="large"
@@ -133,7 +117,7 @@ const ManageDepartmentPage = () => {
           }}
         />
         <div>
-          <Link href="/super_admin/department/create">
+          <Link href="/admin/academic/faculty/create">
             <Button type="primary">Create</Button>
           </Link>
           <Button
@@ -148,7 +132,7 @@ const ManageDepartmentPage = () => {
       <UMTable
         loading={isLoading}
         columns={columns}
-        dataSource={departments}
+        dataSource={academicFaculties}
         pageSize={size}
         totalPages={meta?.total}
         showSizeChanger={true}
@@ -160,4 +144,4 @@ const ManageDepartmentPage = () => {
   );
 };
 
-export default ManageDepartmentPage;
+export default ACFacultyPage;

@@ -9,6 +9,14 @@ export type ResponseSuccessType = {
   meta?: IMeta;
 };
 
+export interface IAcademicFaculty {
+  id: string;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
 export type IGenericErrorResponse = {
   status: number;
   message: string;
