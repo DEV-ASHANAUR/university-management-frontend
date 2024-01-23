@@ -17,6 +17,28 @@ export interface IAcademicFaculty {
   __v: number;
 }
 
+export interface IAcademicDepartment {
+  id: string;
+  title: string;
+  academicFaculty: IAcademicFaculty;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+export interface IAcademicSemester {
+  id: string;
+  title: string;
+  year: number;
+  code: string;
+  startMonth: string;
+  endMonth: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+
 export type IGenericErrorResponse = {
   status: number;
   message: string;
