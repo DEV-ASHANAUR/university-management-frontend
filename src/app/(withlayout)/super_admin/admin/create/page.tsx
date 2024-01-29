@@ -2,15 +2,13 @@
 import Form from "@/components/Forms/Form";
 import FormDatePicker from "@/components/Forms/FormDatePicker";
 import FormInput from "@/components/Forms/FormInput";
-import FormSelectField from "@/components/Forms/FormSelectField";
+import FormSelectField, {
+  SelectOptions,
+} from "@/components/Forms/FormSelectField";
 import FormTextArea from "@/components/Forms/FormTextArea";
 import UMBreadCrumb from "@/components/ui/UMBreadCrumb";
 import UploadImage from "@/components/ui/UploadImage";
-import {
-  bloodGroupOptions,
-  departmentOptions,
-  genderOptions,
-} from "@/constants/global";
+import { bloodGroupOptions, genderOptions } from "@/constants/global";
 import { Row, Col, Button, message } from "antd";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { adminSchema } from "../../../../../../schemas/admin";
@@ -24,17 +22,15 @@ const CreateAdminPage = () => {
   //@ts-ignore
   const departments = data?.departments;
 
-  const departmentOptions =
-    departments &&
-    departments?.map((department: { title: any; id: any }) => {
-      return {
-        label: department?.title,
-        value: department?.id,
-      };
-    });
-    
+  const departmentOptions = departments?.map((department) => {
+    return {
+      label: department?.title,
+      value: department?.id,
+    };
+  });
+
   const onSubmit = async (values: any) => {
-    console.log("values",values);
+    console.log("values", values);
     const obj = { ...values };
     const file = obj["file"];
     delete obj["file"];
@@ -44,17 +40,16 @@ const CreateAdminPage = () => {
     formData.append("data", data);
     message.loading("Creating...");
     try {
-      const result:any = await addAdminWithFormData(formData);
-      if(result?.data){
+      const result: any = await addAdminWithFormData(formData);
+      if (result?.data) {
         message.success("Admin create successFully!");
       }
-      if(result?.error?.status){
-          message.error(result.error.error)
+      if (result?.error?.status) {
+        message.error(result.error.error);
       }
-      
     } catch (error: any) {
-      console.log("errror is:",error)
-      console.log("error page",error.message);
+      console.log("errror is:", error);
+      console.log("error page", error.message);
     }
   };
 
@@ -158,7 +153,7 @@ const CreateAdminPage = () => {
                 <FormSelectField
                   size="large"
                   name="admin.gender"
-                  options={genderOptions}
+                  options={genderOptions as SelectOptions[]}
                   label="Gender"
                   placeholder="Select"
                 />
@@ -173,9 +168,8 @@ const CreateAdminPage = () => {
                 <FormSelectField
                   size="large"
                   name="admin.managementDepartment"
-                  options={departmentOptions}
-                  label="Department"
-                  placeholder="Select"
+                  options={departmentOptions as SelectOptions[]}
+                  label="Select Department"
                 />
               </Col>
 

@@ -2,7 +2,7 @@
 import Form from "@/components/Forms/Form";
 import FormDatePicker from "@/components/Forms/FormDatePicker";
 import FormInput from "@/components/Forms/FormInput";
-import FormSelectField from "@/components/Forms/FormSelectField";
+import FormSelectField, { SelectOptions } from "@/components/Forms/FormSelectField";
 import FormTextArea from "@/components/Forms/FormTextArea";
 import UMBreadCrumb from "@/components/ui/UMBreadCrumb";
 import { bloodGroupOptions, genderOptions } from "@/constants/global";
@@ -21,8 +21,7 @@ const EditAdminPage = ({ params }: any) => {
   const departments = data?.departments;
 
   const departmentOptions =
-    departments &&
-    departments?.map((department: { title: any; id: any }) => {
+    departments?.map((department) => {
       return {
         label: department?.title,
         value: department?.id,
@@ -171,7 +170,7 @@ const EditAdminPage = ({ params }: any) => {
                 <FormSelectField
                   size="large"
                   name="managementDepartment"
-                  options={departmentOptions}
+                  options={departmentOptions as SelectOptions[]}
                   label="Department"
                   placeholder="Select"
                 />

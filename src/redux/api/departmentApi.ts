@@ -1,4 +1,4 @@
-import { ApiResponse, IDepartment, IMeta } from "@/types";
+import { IDepartment, IMeta } from "@/types";
 import { tagTypes } from "../tag-types";
 import { baseApi } from "./baseApi";
 const DEPARTMENT_URL = "/management-departments";
@@ -12,7 +12,7 @@ export const departmentApi = baseApi.injectEndpoints({
         method: "GET",
         params: arg,
       }),
-      transformResponse: (response: IDepartment, meta: IMeta) => {
+      transformResponse: (response: IDepartment[], meta: IMeta) => {
         return {
           departments: response,
           meta,
