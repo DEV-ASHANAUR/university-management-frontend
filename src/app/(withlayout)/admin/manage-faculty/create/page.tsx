@@ -5,43 +5,35 @@ import FormInput from "@/components/Forms/FormInput";
 import FormSelectField from "@/components/Forms/FormSelectField";
 import FormTextArea from "@/components/Forms/FormTextArea";
 import UMBreadCrumb from "@/components/ui/UMBreadCrumb";
+import UploadImage from "@/components/ui/UploadImage";
 import { bloodGroupOptions, genderOptions } from "@/constants/global";
 import { Row, Col, Button, message } from "antd";
-import { useDepartmentsQuery } from "@/redux/api/departmentApi";
-import { useAdminQuery, useUpdateAdminMutation } from "@/redux/api/adminApi";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { adminSchema } from "../../../../../../schemas/admin";
+import ACFacultyField from "@/components/Forms/ACFacultyField";
+import ACDepartmentField from "@/components/Forms/ACDepartmentField";
+import { useAddFacultyWithFormDataMutation } from "@/redux/api/facultyApi";
 
-const EditAdminPage = ({ params }: any) => {
-  const { data: adminData, isLoading: loading } = useAdminQuery(params?.id);
+const CreateAdminPage = () => {
+  const [addFacultyWithFormData] = useAddFacultyWithFormDataMutation();
 
-  const [updateAdmin] = useUpdateAdminMutation();
-
-  const { data } = useDepartmentsQuery({ limit: 100, page: 1 });
-
-  //@ts-ignore
-  const departments = data?.departments;
-
-  const departmentOptions =
-    departments &&
-    departments?.map((department: { title: any; id: any }) => {
-      return {
-        label: department?.title,
-        value: department?.id,
-      };
-    });
-
-  const onSubmit = async (value: any) => {
+  const onSubmit = async (values: any) => {
+    console.log("first",values)
+    const obj = { ...values };
+    const file = obj["file"];
+    delete obj["file"];
+    const data = JSON.stringify(obj);
+    const formData = new FormData();
+    formData.append("file", file as Blob);
+    formData.append("data", data);
     message.loading("Creating...");
     try {
-      const result: any = await updateAdmin({
-        id: params?.id,
-        body: value,
-      }).unwrap();
-
-      if (result?.id) {
-        message.success("Admin edited successFully!");
+      const result: any = await addFacultyWithFormData(formData);
+      if (result?.data) {
+        message.success("Faculty created successFully!");
       }
       if (result?.error?.status) {
-        message.error(result.error.error);
+        message.error(result?.error?.error);
       }
     } catch (error: any) {
       console.log("errror is:", error);
@@ -49,43 +41,23 @@ const EditAdminPage = ({ params }: any) => {
     }
   };
 
-  const defaultValues = {
-    name: {
-      firstName: adminData?.name?.firstName || "",
-      lastName: adminData?.name?.lastName || "",
-      middleName: adminData?.name?.middleName || "",
-    },
-    dateOfBirth: adminData?.dateOfBirth || "",
-    email: adminData?.email || "",
-    designation: adminData?.designation || "",
-    contactNo: adminData?.contactNo || "",
-    emergencyContactNo: adminData?.emergencyContactNo || "",
-    permanentAddress: adminData?.permanentAddress || "",
-    presentAddress: adminData?.presentAddress || "",
-    bloodGroup: adminData?.bloodGroup || "",
-    gender: adminData?.gender || "",
-    managementDepartment: adminData?.managementDepartment?.id || "",
-  };
-
-  console.log("default",defaultValues)
-
   return (
     <div>
       <UMBreadCrumb
         items={[
           {
-            label: "super_admin",
-            link: "/super_admin",
+            label: "admin",
+            link: "/admin",
           },
           {
-            label: "admin",
-            link: "/super_admin/admin",
+            label: "manage-faculty",
+            link: "/admin/manage-faculty",
           },
         ]}
       />
-      <h1 style={{ margin: "10px 0" }}>Edit Admin</h1>
+      <h1 style={{ margin: "10px 0" }}>Create Faculty</h1>
       <div>
-        <Form submitHandler={onSubmit} defaultValues={defaultValues}>
+        <Form submitHandler={onSubmit}>
           <div
             style={{
               border: "1px solid #d9d9d6",
@@ -102,50 +74,63 @@ const EditAdminPage = ({ params }: any) => {
             >
               Admin Infomation
             </p>
-            <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+            <Row gutter={{ xs: 24, xl: 8, lg: 8, md: 24 }}>
               <Col
                 className="gutter-row"
-                span={8}
+                span={6}
                 style={{
                   marginBottom: "10px",
                 }}
               >
                 <FormInput
                   type="text"
-                  name="name.firstName"
+                  name="faculty.name.firstName"
                   size="large"
                   label="First Name"
                 />
               </Col>
               <Col
                 className="gutter-row"
-                span={8}
+                span={6}
                 style={{
                   marginBottom: "10px",
                 }}
               >
                 <FormInput
                   type="text"
-                  name="name.middleName"
+                  name="faculty.name.middleName"
                   size="large"
                   label="Middle Name"
                 />
               </Col>
               <Col
                 className="gutter-row"
-                span={8}
+                span={6}
                 style={{
                   marginBottom: "10px",
                 }}
               >
                 <FormInput
                   type="text"
-                  name="name.lastName"
+                  name="faculty.name.lastName"
                   size="large"
                   label="Last Name"
                 />
               </Col>
-
+              <Col
+                className="gutter-row"
+                span={6}
+                style={{
+                  marginBottom: "10px",
+                }}
+              >
+                <FormInput
+                  type="password"
+                  name="password"
+                  size="large"
+                  label="Password"
+                />
+              </Col>
               <Col
                 className="gutter-row"
                 span={8}
@@ -155,7 +140,7 @@ const EditAdminPage = ({ params }: any) => {
               >
                 <FormSelectField
                   size="large"
-                  name="gender"
+                  name="faculty.gender"
                   options={genderOptions}
                   label="Gender"
                   placeholder="Select"
@@ -168,13 +153,30 @@ const EditAdminPage = ({ params }: any) => {
                   marginBottom: "10px",
                 }}
               >
-                <FormSelectField
-                  size="large"
-                  name="managementDepartment"
-                  options={departmentOptions}
-                  label="Department"
-                  placeholder="Select"
+                <ACFacultyField
+                  name="faculty.academicFaculty"
+                  label="Academic Faculty"
                 />
+              </Col>
+
+              <Col
+                className="gutter-row"
+                span={8}
+                style={{
+                  marginBottom: "10px",
+                }}
+              >
+                <ACDepartmentField name="faculty.academicDepartment" label="Academic Department" />
+              </Col>
+
+              <Col
+                className="gutter-row"
+                span={8}
+                style={{
+                  marginBottom: "10px",
+                }}
+              >
+                <UploadImage name="file" />
               </Col>
             </Row>
           </div>
@@ -205,7 +207,7 @@ const EditAdminPage = ({ params }: any) => {
               >
                 <FormInput
                   type="email"
-                  name="email"
+                  name="faculty.email"
                   size="large"
                   label="Email address"
                 />
@@ -219,7 +221,7 @@ const EditAdminPage = ({ params }: any) => {
               >
                 <FormInput
                   type="text"
-                  name="contactNo"
+                  name="faculty.contactNo"
                   size="large"
                   label="Contact No."
                 />
@@ -233,7 +235,7 @@ const EditAdminPage = ({ params }: any) => {
               >
                 <FormInput
                   type="text"
-                  name="emergencyContactNo"
+                  name="faculty.emergencyContactNo"
                   size="large"
                   label="Emergency Contact No."
                 />
@@ -246,7 +248,7 @@ const EditAdminPage = ({ params }: any) => {
                 }}
               >
                 <FormDatePicker
-                  name="dateOfBirth"
+                  name="faculty.dateOfBirth"
                   size="large"
                   label="Date of Birth"
                 />
@@ -260,7 +262,7 @@ const EditAdminPage = ({ params }: any) => {
               >
                 <FormSelectField
                   size="large"
-                  name="bloodGroup"
+                  name="faculty.bloodGroup"
                   options={bloodGroupOptions}
                   label="Blood group"
                   placeholder="Select"
@@ -276,7 +278,7 @@ const EditAdminPage = ({ params }: any) => {
                 <FormInput
                   type="text"
                   size="large"
-                  name="designation"
+                  name="faculty.designation"
                   label="Designation"
                 />
               </Col>
@@ -289,7 +291,7 @@ const EditAdminPage = ({ params }: any) => {
               >
                 <FormTextArea
                   size="large"
-                  name="presentAddress"
+                  name="faculty.presentAddress"
                   label="Present Address"
                   rows={4}
                 />
@@ -304,7 +306,7 @@ const EditAdminPage = ({ params }: any) => {
               >
                 <FormTextArea
                   size="large"
-                  name="permanentAddress"
+                  name="faculty.permanentAddress"
                   label="Permanent Address"
                   rows={4}
                 />
@@ -312,7 +314,7 @@ const EditAdminPage = ({ params }: any) => {
             </Row>
           </div>
           <Button htmlType="submit" type="primary">
-            Update
+            Create
           </Button>
         </Form>
       </div>
@@ -320,4 +322,4 @@ const EditAdminPage = ({ params }: any) => {
   );
 };
 
-export default EditAdminPage;
+export default CreateAdminPage;

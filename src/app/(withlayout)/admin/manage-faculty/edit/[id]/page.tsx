@@ -7,38 +7,26 @@ import FormTextArea from "@/components/Forms/FormTextArea";
 import UMBreadCrumb from "@/components/ui/UMBreadCrumb";
 import { bloodGroupOptions, genderOptions } from "@/constants/global";
 import { Row, Col, Button, message } from "antd";
-import { useDepartmentsQuery } from "@/redux/api/departmentApi";
-import { useAdminQuery, useUpdateAdminMutation } from "@/redux/api/adminApi";
+import ACDepartmentField from "@/components/Forms/ACDepartmentField";
+import ACFacultyField from "@/components/Forms/ACFacultyField";
+import { useFacultyQuery, useUpdateFacultyMutation } from "@/redux/api/facultyApi";
 
 const EditAdminPage = ({ params }: any) => {
-  const { data: adminData, isLoading: loading } = useAdminQuery(params?.id);
+  const { data: facultyData, isLoading: loading } = useFacultyQuery(params?.id);
 
-  const [updateAdmin] = useUpdateAdminMutation();
-
-  const { data } = useDepartmentsQuery({ limit: 100, page: 1 });
-
-  //@ts-ignore
-  const departments = data?.departments;
-
-  const departmentOptions =
-    departments &&
-    departments?.map((department: { title: any; id: any }) => {
-      return {
-        label: department?.title,
-        value: department?.id,
-      };
-    });
+  const [updateFaculty] = useUpdateFacultyMutation();
 
   const onSubmit = async (value: any) => {
+    console.log("up value,",value)
     message.loading("Creating...");
     try {
-      const result: any = await updateAdmin({
+      const result: any = await updateFaculty({
         id: params?.id,
         body: value,
       }).unwrap();
 
       if (result?.id) {
-        message.success("Admin edited successFully!");
+        message.success("Faculty edited successFully!");
       }
       if (result?.error?.status) {
         message.error(result.error.error);
@@ -51,39 +39,39 @@ const EditAdminPage = ({ params }: any) => {
 
   const defaultValues = {
     name: {
-      firstName: adminData?.name?.firstName || "",
-      lastName: adminData?.name?.lastName || "",
-      middleName: adminData?.name?.middleName || "",
+      firstName: facultyData?.name?.firstName || "",
+      lastName: facultyData?.name?.lastName || "",
+      middleName: facultyData?.name?.middleName || "",
     },
-    dateOfBirth: adminData?.dateOfBirth || "",
-    email: adminData?.email || "",
-    designation: adminData?.designation || "",
-    contactNo: adminData?.contactNo || "",
-    emergencyContactNo: adminData?.emergencyContactNo || "",
-    permanentAddress: adminData?.permanentAddress || "",
-    presentAddress: adminData?.presentAddress || "",
-    bloodGroup: adminData?.bloodGroup || "",
-    gender: adminData?.gender || "",
-    managementDepartment: adminData?.managementDepartment?.id || "",
+    dateOfBirth: facultyData?.dateOfBirth || "",
+    email: facultyData?.email || "",
+    designation: facultyData?.designation || "",
+    contactNo: facultyData?.contactNo || "",
+    emergencyContactNo: facultyData?.emergencyContactNo || "",
+    permanentAddress: facultyData?.permanentAddress || "",
+    presentAddress: facultyData?.presentAddress || "",
+    bloodGroup: facultyData?.bloodGroup || "",
+    gender: facultyData?.gender || "",
+    academicDepartment: facultyData?.academicDepartment?.syncId || "",
+    academicFaculty: facultyData?.academicFaculty?.syncId || "",
   };
 
-  console.log("default",defaultValues)
 
   return (
     <div>
       <UMBreadCrumb
         items={[
           {
-            label: "super_admin",
-            link: "/super_admin",
+            label: "admin",
+            link: "/admin",
           },
           {
-            label: "admin",
-            link: "/super_admin/admin",
+            label: "Manage-Faculty",
+            link: "/admin/manage-faculty",
           },
         ]}
       />
-      <h1 style={{ margin: "10px 0" }}>Edit Admin</h1>
+      <h1 style={{ margin: "10px 0" }}>Edit Faculty</h1>
       <div>
         <Form submitHandler={onSubmit} defaultValues={defaultValues}>
           <div
@@ -102,10 +90,10 @@ const EditAdminPage = ({ params }: any) => {
             >
               Admin Infomation
             </p>
-            <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+            <Row gutter={{ xs: 24, xl: 8, lg: 8, md: 24 }}>
               <Col
                 className="gutter-row"
-                span={8}
+                span={6}
                 style={{
                   marginBottom: "10px",
                 }}
@@ -119,7 +107,7 @@ const EditAdminPage = ({ params }: any) => {
               </Col>
               <Col
                 className="gutter-row"
-                span={8}
+                span={6}
                 style={{
                   marginBottom: "10px",
                 }}
@@ -133,7 +121,7 @@ const EditAdminPage = ({ params }: any) => {
               </Col>
               <Col
                 className="gutter-row"
-                span={8}
+                span={6}
                 style={{
                   marginBottom: "10px",
                 }}
@@ -168,12 +156,22 @@ const EditAdminPage = ({ params }: any) => {
                   marginBottom: "10px",
                 }}
               >
-                <FormSelectField
-                  size="large"
-                  name="managementDepartment"
-                  options={departmentOptions}
-                  label="Department"
-                  placeholder="Select"
+                <ACFacultyField
+                  name="academicFaculty"
+                  label="Academic Faculty"
+                />
+              </Col>
+
+              <Col
+                className="gutter-row"
+                span={8}
+                style={{
+                  marginBottom: "10px",
+                }}
+              >
+                <ACDepartmentField
+                  name="academicDepartment"
+                  label="Academic Department"
                 />
               </Col>
             </Row>
