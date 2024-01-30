@@ -48,7 +48,7 @@ export const buildingApi = baseApi.injectEndpoints({
     }),
     //delete single building by id
     deleteBuilding: build.mutation({
-      query: (id) => ({
+      query: (id:string) => ({
         url: `${BUILDING_URL}/${id}`,
         method: "DELETE",
       }),
