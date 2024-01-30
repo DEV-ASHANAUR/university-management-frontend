@@ -32,7 +32,6 @@ const CreateStudentPage = () => {
   ];
 
   const handleStudentSubmit = async (values: any) => {
-    console.log("first",values)
     const obj = { ...values };
     const file = obj["file"];
     delete obj["file"];
@@ -71,7 +70,6 @@ const CreateStudentPage = () => {
       />
       <h1 style={{ margin: "10px 0" }}>Create Student</h1>
       <StepperForm
-        persistKey="student-create-form"
         submitHandler={(value) => {
           handleStudentSubmit(value);
         }}

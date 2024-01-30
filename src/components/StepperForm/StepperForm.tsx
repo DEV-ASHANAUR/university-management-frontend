@@ -13,17 +13,15 @@ interface IStepsProps {
   steps: ISteps[];
   submitHandler: (el: any) => void;
   navigateLink?: string;
-  persistKey: string;
 }
 
 const StepperForm = ({
   steps,
   submitHandler,
   navigateLink,
-  persistKey,
 }: IStepsProps) => {
   const router = useRouter();
-
+  const persistKey = "student-create-form";
   const [current, setCurrent] = useState<number>(
     !!getFromLocalStorage("step")
       ? Number(JSON.parse(getFromLocalStorage("step") as string).step)
@@ -62,8 +60,8 @@ const StepperForm = ({
   const handleStudentOnSubmit = (data: any) => {
     submitHandler(data);
     reset();
+    setLocalStorage("persistKey", JSON.stringify({}));
     setLocalStorage("step", JSON.stringify({ step: 0 }));
-    setLocalStorage(persistKey, JSON.stringify({}));
     navigateLink && router.push(navigateLink);
   };
 

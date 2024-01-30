@@ -13,7 +13,6 @@ const ACFacultyField = ({ name, label }: ACFacultyFieldProps) => {
   });
 
   const academicFaculties: any = data?.academicFaculties;
-
   const acFacultyOptions = academicFaculties?.map((acFaculty: any) => {
     return {
       label: acFaculty?.title,
