@@ -8,8 +8,6 @@ import UMBreadCrumb from "@/components/ui/UMBreadCrumb";
 import UploadImage from "@/components/ui/UploadImage";
 import { bloodGroupOptions, genderOptions } from "@/constants/global";
 import { Row, Col, Button, message } from "antd";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { adminSchema } from "../../../../../../schemas/admin";
 import ACFacultyField from "@/components/Forms/ACFacultyField";
 import ACDepartmentField from "@/components/Forms/ACDepartmentField";
 import { useAddFacultyWithFormDataMutation } from "@/redux/api/facultyApi";
