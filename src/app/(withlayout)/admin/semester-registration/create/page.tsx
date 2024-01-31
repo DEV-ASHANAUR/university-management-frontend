@@ -9,41 +9,28 @@ import FormSelectField, {
 } from "@/components/Forms/FormSelectField";
 import { useAddCourseMutation, useCoursesQuery } from "@/redux/api/courseApi";
 import FormMultiSelectField from "@/components/Forms/FormMultiSelectField";
+import { useAddSemesterRegistrationsMutation } from "@/redux/api/semesterRegistrationApi";
+import FormDatePicker from "@/components/Forms/FormDatePicker";
+import ACSemesterField from "@/components/Forms/ACSemesterField";
 
-const CreateCoursePage = () => {
-  const [addCourse] = useAddCourseMutation();
+const CreateSemesterRegistrationPage = () => {
+  const [addSemesterRegistrations] = useAddSemesterRegistrationsMutation();
   const { role } = getUserInfo() as any;
 
-  const { data, isLoading } = useCoursesQuery({ limit: 100, page: 1 });
-
-  const courses = data?.courses;
-
-  const coursesOptions = courses?.map((course: any) => {
-    return {
-      label: course?.title,
-      value: course?.id,
-    };
-  });
-
   const onSubmit = async (data: any) => {
-    data.credits = parseInt(data?.credits);
-    const coursePreRequisitesOptions = data?.preRequisiteCourses?.map(
-      (id: string) => {
-        return {
-          courseId: id,
-        };
-      }
-    );
-    data.preRequisiteCourses = coursePreRequisitesOptions;
+    data.minCredit = parseInt(data?.minCredit);
+    data.maxCredit = parseInt(data?.maxCredit);
+    
 
     console.log("values", data);
     message.loading("creating....");
     try {
-      const result = await addCourse(data).unwrap();
-      if (result?.id) {
-        message.success("Course Created successFully!");
-      } else {
-        message.error("Failed to Create Course!");
+      const result = await addSemesterRegistrations(data);
+      if (result?.data?.id) {
+        message.success("Semester Registrations Created successFully!");
+      }
+       if(result?.error?.error) {
+        message.error(result?.error?.error);
       }
     } catch (error: any) {
       console.log(error?.errorMessages);
@@ -56,31 +43,29 @@ const CreateCoursePage = () => {
         items={[
           { label: `${role}`, link: `/${role}` },
           {
-            label: "course",
-            link: `/${role}/course`,
+            label: "semester-registration",
+            link: `/${role}/semester-registration`,
           },
         ]}
       />
-      <h1>Create Course</h1>
+      <h1>Create Semester Registration</h1>
       <Form submitHandler={onSubmit}>
         <Row gutter={{ xs: 24, xl: 8, lg: 8, md: 24 }}>
           <Col span={8} style={{ margin: "10px 0" }}>
             <div style={{ margin: "10px 0" }}>
-              <FormInput type="text" name="title" label="Course Title" />
+                <FormDatePicker name="startDate" label="Start Date" size="large" />
             </div>
             <div style={{ margin: "10px 0" }}>
-              <FormInput type="text" name="code" label="Course Code" />
+                <FormDatePicker name="endDate" label="End Date" size="large" />
             </div>
             <div style={{ margin: "10px 0" }}>
-              <FormInput type="text" name="credits" label="Course Credits" />
+                <ACSemesterField name="academicSemesterId" label="Academic Semester" />
             </div>
             <div style={{ margin: "10px 0" }}>
-              <FormMultiSelectField
-                name="preRequisiteCourses"
-                label="Pre Requisite Courses"
-                options={coursesOptions as SelectOptions[]}
-                placeholder="Select"
-              />
+              <FormInput type="text" name="minCredit" label="Min Credit" />
+            </div>
+            <div style={{ margin: "10px 0" }}>
+              <FormInput type="text" name="maxCredit" label="Max Credit" />
             </div>
           </Col>
         </Row>
@@ -92,4 +77,4 @@ const CreateCoursePage = () => {
   );
 };
 
-export default CreateCoursePage;
+export default CreateSemesterRegistrationPage;
