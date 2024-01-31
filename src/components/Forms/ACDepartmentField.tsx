@@ -22,8 +22,6 @@ const ACDepartmentField = ({ name, label }: ACDeparmentFieldProps) => {
     };
   });
 
-  console.log("rendered",acDepartmentOptions)
-
   return (
     <FormSelectField
       name={name}

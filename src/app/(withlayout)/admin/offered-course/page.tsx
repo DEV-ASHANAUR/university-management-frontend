@@ -11,8 +11,9 @@ import { useDebounce } from "@/redux/hooks";
 import UMModal from "@/components/ui/UMModal";
 import { useCoursesQuery, useDeleteCourseMutation } from "@/redux/api/courseApi";
 import { useDeleteSemesterRegistrationsMutation, useSemesterRegistrationQuery, useSemesterRegistrationsQuery } from "@/redux/api/semesterRegistrationApi";
+import { useDeleteOfferedCourseMutation, useOfferedCoursesQuery } from "@/redux/api/offeredCourseApi";
 
-const SemesterRegistrationPage = () => {
+const OfferedCourse = () => {
   const query: Record<string, any> = {};
 
   const [page, setPage] = useState<number>(1);
@@ -20,7 +21,7 @@ const SemesterRegistrationPage = () => {
   const [sortBy, setSortBy] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [deleteSemesterRegistrations] = useDeleteSemesterRegistrationsMutation();
+  const [deleteOfferedCourse] = useDeleteOfferedCourseMutation();
 
   query["limit"] = size;
   query["page"] = page;
@@ -33,17 +34,16 @@ const SemesterRegistrationPage = () => {
     query["searchTerm"] = debouncedTerm;
   }
 
-  const { data, isLoading } = useSemesterRegistrationsQuery({ ...query });
+  const { data, isLoading } = useOfferedCoursesQuery({ ...query });
 
-  const semesterRegistrations = data?.semesterRegistrations;
+  const offeredCourses = data?.offeredCourses;
   const meta = data?.meta;
-
 
   const deleteHandler = async (id: string) => {
     message.loading("Deleting...");
     try {
-      await deleteSemesterRegistrations(id);
-      message.success("Semester Registrations deleted successfully!");
+      await deleteOfferedCourse(id);
+      message.success("Offered Course deleted successfully!");
     } catch (error: any) {
       message.error(error.message);
     }
@@ -51,37 +51,19 @@ const SemesterRegistrationPage = () => {
 
   const columns = [
     {
-      title: "Start Date",
-      dataIndex: "startDate",
+      title: "Course",
+      dataIndex: "course",
       render: function(data:any){
-        return data && dayjs(data).format("MMM D, YYYY hh:mm A");
+        return <>{data?.title}</>;
       },
       sorter: true,
     },
     {
-      title: "End Date",
-      dataIndex: "endDate",
+      title: "Academic department",
+      dataIndex: "academicDepartment",
       render: function(data:any){
-        return data && dayjs(data).format("MMM D, YYYY hh:mm A");
+        return <>{data?.title}</>;
       },
-      sorter: true,
-    },
-    {
-      title: "Credit",
-      render: function (data:any) {
-        return <>Min-{data?.minCredit} Max-{data?.maxCredit}</>
-      }
-    },
-    {
-      title: "Semester",
-      dataIndex:"academicSemester",
-      render: function (data:any) {
-        return <>{data?.title}-{data?.year}</>
-      }
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
       sorter: true,
     },
     {
@@ -97,7 +79,7 @@ const SemesterRegistrationPage = () => {
       render: function (data: any) {
         return (
           <>
-            <Link href={`/admin/semester-registration/edit/${data.id}`}>
+            <Link href={`/admin/offered-course/edit/${data.id}`}>
               <Button
                 style={{
                   margin: "0px 5px",
@@ -110,7 +92,7 @@ const SemesterRegistrationPage = () => {
 
             <UMModal
               id={data?.id}
-              description="Are You sure you want to delete this Registration?"
+              description="Are You sure you want to delete this Offered Course?"
               deleteHandler={deleteHandler}
             />
           </>
@@ -141,7 +123,7 @@ const SemesterRegistrationPage = () => {
   return (
     <div>
       <UMBreadCrumb items={[{ label: "admin", link: "admin" }]} />
-      <ActionBar title="Semester Registration List">
+      <ActionBar title="Offered Courses List">
         <Input
           type="text"
           size="large"
@@ -152,7 +134,7 @@ const SemesterRegistrationPage = () => {
           }}
         />
         <div>
-          <Link href="/admin/semester-registration/create">
+          <Link href="/admin/offered-course/create">
             <Button type="primary">Create</Button>
           </Link>
           <Button
@@ -167,7 +149,7 @@ const SemesterRegistrationPage = () => {
       <UMTable
         loading={isLoading}
         columns={columns}
-        dataSource={semesterRegistrations}
+        dataSource={offeredCourses}
         pageSize={size}
         totalPages={meta?.total}
         showSizeChanger={true}
@@ -179,4 +161,4 @@ const SemesterRegistrationPage = () => {
   );
 };
 
-export default SemesterRegistrationPage;
+export default OfferedCourse;
