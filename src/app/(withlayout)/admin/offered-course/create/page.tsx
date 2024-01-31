@@ -1,11 +1,8 @@
 "use client";
 import Form from "@/components/Forms/Form";
-import FormInput from "@/components/Forms/FormInput";
 import UMBreadCrumb from "@/components/ui/UMBreadCrumb";
 import { getUserInfo } from "@/services/auth.service";
 import { Row, Col, Button, message } from "antd";
-import FormDatePicker from "@/components/Forms/FormDatePicker";
-import ACSemesterField from "@/components/Forms/ACSemesterField";
 import { useAddOfferedCourseMutation } from "@/redux/api/offeredCourseApi";
 import ACDepartmentField from "@/components/Forms/ACDepartmentField";
 import { useSemesterRegistrationsQuery } from "@/redux/api/semesterRegistrationApi";
@@ -37,20 +34,19 @@ const CreateOfferedCoursePage = () => {
 
   const onSubmit = async (data: any) => {
 
-    console.log("values", data);
+    console.log("first",data)
     message.loading("creating....");
-    try {
-      const result = await addOfferedCourse(data).unwrap();;
-      console.log("created", result);
-        if (result?.length > 0) {
-          message.success("Offered Course Created successFully!");
-        }else{
-            message.error("Failed to create! Maybe Already Have!")
-        }
-    } catch (error: any) {
-      console.log(error?.errorMessages);
-      message.error("Error! Please try Again!");
-    }
+    // try {
+    //   const result = await addOfferedCourse(data).unwrap();
+    //   if (result?.length > 0) {
+    //     message.success("Offered Course Created successFully!");
+    //   } else {
+    //     message.error("Failed to create! Maybe Already Have!");
+    //   }
+    // } catch (error: any) {
+    //   console.log(error?.errorMessages);
+    //   message.error("Error! Please try Again!");
+    // }
   };
   return (
     <div>

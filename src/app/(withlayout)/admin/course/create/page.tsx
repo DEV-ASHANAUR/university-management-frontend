@@ -35,8 +35,6 @@ const CreateCoursePage = () => {
       }
     );
     data.preRequisiteCourses = coursePreRequisitesOptions;
-
-    console.log("values", data);
     message.loading("creating....");
     try {
       const result = await addCourse(data).unwrap();

@@ -4,11 +4,6 @@ import FormInput from "@/components/Forms/FormInput";
 import UMBreadCrumb from "@/components/ui/UMBreadCrumb";
 import { getUserInfo } from "@/services/auth.service";
 import { Row, Col, Button, message } from "antd";
-import FormSelectField, {
-  SelectOptions,
-} from "@/components/Forms/FormSelectField";
-import { useAddCourseMutation, useCoursesQuery } from "@/redux/api/courseApi";
-import FormMultiSelectField from "@/components/Forms/FormMultiSelectField";
 import { useAddSemesterRegistrationsMutation } from "@/redux/api/semesterRegistrationApi";
 import FormDatePicker from "@/components/Forms/FormDatePicker";
 import ACSemesterField from "@/components/Forms/ACSemesterField";
@@ -20,16 +15,14 @@ const CreateSemesterRegistrationPage = () => {
   const onSubmit = async (data: any) => {
     data.minCredit = parseInt(data?.minCredit);
     data.maxCredit = parseInt(data?.maxCredit);
-    
 
-    console.log("values", data);
     message.loading("creating....");
     try {
       const result = await addSemesterRegistrations(data);
       if (result?.data?.id) {
         message.success("Semester Registrations Created successFully!");
       }
-       if(result?.error?.error) {
+      if (result?.error?.error) {
         message.error(result?.error?.error);
       }
     } catch (error: any) {
@@ -53,13 +46,20 @@ const CreateSemesterRegistrationPage = () => {
         <Row gutter={{ xs: 24, xl: 8, lg: 8, md: 24 }}>
           <Col span={8} style={{ margin: "10px 0" }}>
             <div style={{ margin: "10px 0" }}>
-                <FormDatePicker name="startDate" label="Start Date" size="large" />
+              <FormDatePicker
+                name="startDate"
+                label="Start Date"
+                size="large"
+              />
             </div>
             <div style={{ margin: "10px 0" }}>
-                <FormDatePicker name="endDate" label="End Date" size="large" />
+              <FormDatePicker name="endDate" label="End Date" size="large" />
             </div>
             <div style={{ margin: "10px 0" }}>
-                <ACSemesterField name="academicSemesterId" label="Academic Semester" />
+              <ACSemesterField
+                name="academicSemesterId"
+                label="Academic Semester"
+              />
             </div>
             <div style={{ margin: "10px 0" }}>
               <FormInput type="text" name="minCredit" label="Min Credit" />
