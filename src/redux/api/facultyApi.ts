@@ -1,5 +1,4 @@
-
-import { IFaculty, IMeta } from "@/types";
+import { ICoreFaculty, IFaculty, IFacultyCourse, IMeta } from "@/types";
 import { baseApi } from "./baseApi";
 import { tagTypes } from "../tag-types";
 
@@ -59,6 +58,38 @@ export const facultyApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [tagTypes.faculty],
     }),
+    facultyCourses: build.query({
+      query: (arg: Record<string, any>) => {
+        return {
+          url: `${BASE_FACULTY_API_URL}/my-courses`,
+          method: "GET",
+          params: arg,
+        };
+      },
+      transformResponse: (response: IFacultyCourse[], meta: IMeta) => {
+        return {
+          myCourses: response,
+          meta,
+        };
+      },
+      providesTags: [tagTypes.student],
+    }),
+    facultyCourseStudents: build.query({
+      query: (arg: Record<string, any>) => {
+        return {
+          url: `${BASE_FACULTY_API_URL}/my-course-students`,
+          method: "GET",
+          params: arg,
+        };
+      },
+      transformResponse: (response: ICoreFaculty[], meta: IMeta) => {
+        return {
+          myCourseStudents: response,
+          meta,
+        };
+      },
+      providesTags: [tagTypes.student],
+    }),
   }),
 });
 
@@ -68,4 +99,7 @@ export const {
   useFacultyQuery, // get single faculty user hook
   useUpdateFacultyMutation, // update single faculty user hook
   useDeleteFacultyMutation, // delete single faculty user hook
+
+  useFacultyCourseStudentsQuery,
+  useFacultyCoursesQuery,
 } = facultyApi;
