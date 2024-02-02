@@ -1,16 +1,29 @@
 "use client";
 import UMBreadCrumb from "@/components/ui/UMBreadCrumb";
 import Link from "next/link";
-import { Button, Input, message } from "antd";
+import { Button, Input, Tooltip, message } from "antd";
 import ActionBar from "@/components/ui/ActionBar";
 import UMTable from "@/components/ui/UMTable";
 import { useState } from "react";
 import dayjs from "dayjs";
-import { EditOutlined, ReloadOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  PlayCircleOutlined,
+  ReloadOutlined,
+} from "@ant-design/icons";
 import { useDebounce } from "@/redux/hooks";
 import UMModal from "@/components/ui/UMModal";
-import { useCoursesQuery, useDeleteCourseMutation } from "@/redux/api/courseApi";
-import { useDeleteSemesterRegistrationsMutation, useSemesterRegistrationQuery, useSemesterRegistrationsQuery } from "@/redux/api/semesterRegistrationApi";
+import {
+  useCoursesQuery,
+  useDeleteCourseMutation,
+} from "@/redux/api/courseApi";
+import {
+  useDeleteSemesterRegistrationsMutation,
+  useSemesterRegistrationQuery,
+  useSemesterRegistrationsQuery,
+  useStartNewSemesterMutation,
+} from "@/redux/api/semesterRegistrationApi";
+import { start } from "repl";
 
 const SemesterRegistrationPage = () => {
   const query: Record<string, any> = {};
@@ -20,7 +33,9 @@ const SemesterRegistrationPage = () => {
   const [sortBy, setSortBy] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [deleteSemesterRegistrations] = useDeleteSemesterRegistrationsMutation();
+  const [deleteSemesterRegistrations] =
+    useDeleteSemesterRegistrationsMutation();
+  const [startNewSemester] = useStartNewSemesterMutation();
 
   query["limit"] = size;
   query["page"] = page;
@@ -38,7 +53,6 @@ const SemesterRegistrationPage = () => {
   const semesterRegistrations = data?.semesterRegistrations;
   const meta = data?.meta;
 
-
   const deleteHandler = async (id: string) => {
     message.loading("Deleting...");
     try {
@@ -49,11 +63,26 @@ const SemesterRegistrationPage = () => {
     }
   };
 
+  const handleStartSemester = async (id: string) => {
+    try {
+      const res = await startNewSemester(id);
+      console.log("message", res);
+      if (res?.data?.message) {
+        message.success(res?.data?.message);
+      }
+      if (res?.error?.error) {
+        message.error(res?.error?.error);
+      }
+    } catch (error: any) {
+      console.log(error?.message);
+    }
+  };
+
   const columns = [
     {
       title: "Start Date",
       dataIndex: "startDate",
-      render: function(data:any){
+      render: function (data: any) {
         return data && dayjs(data).format("MMM D, YYYY hh:mm A");
       },
       sorter: true,
@@ -61,23 +90,31 @@ const SemesterRegistrationPage = () => {
     {
       title: "End Date",
       dataIndex: "endDate",
-      render: function(data:any){
+      render: function (data: any) {
         return data && dayjs(data).format("MMM D, YYYY hh:mm A");
       },
       sorter: true,
     },
     {
       title: "Credit",
-      render: function (data:any) {
-        return <>Min-{data?.minCredit} Max-{data?.maxCredit}</>
-      }
+      render: function (data: any) {
+        return (
+          <>
+            Min-{data?.minCredit} Max-{data?.maxCredit}
+          </>
+        );
+      },
     },
     {
       title: "Semester",
-      dataIndex:"academicSemester",
-      render: function (data:any) {
-        return <>{data?.title}-{data?.year}</>
-      }
+      dataIndex: "academicSemester",
+      render: function (data: any) {
+        return (
+          <>
+            {data?.title}-{data?.year}
+          </>
+        );
+      },
     },
     {
       title: "Status",
@@ -107,6 +144,21 @@ const SemesterRegistrationPage = () => {
                 <EditOutlined />
               </Button>
             </Link>
+
+            {data?.status === "ENDED" &&
+              data?.academicSemester?.isCurrent == false && (
+                <Tooltip title="Start Semester" placement="bottom">
+                  <Button
+                    type="primary"
+                    onClick={() => handleStartSemester(data?.id)}
+                    style={{
+                      margin: "0px 5px",
+                    }}
+                  >
+                    <PlayCircleOutlined />
+                  </Button>
+                </Tooltip>
+              )}
 
             <UMModal
               id={data?.id}
