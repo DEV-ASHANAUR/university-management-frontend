@@ -7,12 +7,13 @@ import { ReloadOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import { useDebounce } from "@/redux/hooks";
 import UMTable from "@/components/ui/UMTable";
-import {
-  useFacultyCourseStudentsQuery
-} from "@/redux/api/facultyApi";
+import { useFacultyCourseStudentsQuery } from "@/redux/api/facultyApi";
+import { useSearchParams } from "next/navigation";
 
-const FacultyCoursesPage = ({ searchParams }: any) => {
-  const { courseId, offeredCourseSectionId } = searchParams;
+const FacultyCoursesPage = () => {
+  const searchParams = useSearchParams();
+  const courseId = searchParams.get("courseId");
+  const offeredCourseSectionId = searchParams.get("offeredCourseSectionId");
 
   const query: Record<string, any> = {};
 
@@ -55,8 +56,7 @@ const FacultyCoursesPage = ({ searchParams }: any) => {
         return (
           <>
             {data?.firstName}
-            {data?.middleName}{" "}
-            {data?.lastName}
+            {data?.middleName} {data?.lastName}
           </>
         );
       },
