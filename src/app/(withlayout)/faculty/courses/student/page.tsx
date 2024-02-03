@@ -78,8 +78,12 @@ const FacultyCoursesPage = () => {
       title: "Action",
       render: function (data: any) {
         return (
-          <div key="1" style={{ margin: "20px 0px" }}>
-            <Button type="primary">View Marks</Button>
+            <div key="1" style={{ margin: "20px 0px" }}>
+            <Link
+              href={`/faculty/student-result?studentId=${data?.id}&courseId=${courseId}&offeredCourseSectionId=${offeredCourseSectionId}`}
+            >
+              <Button type="primary">View Marks</Button>
+            </Link>
           </div>
         );
       },
