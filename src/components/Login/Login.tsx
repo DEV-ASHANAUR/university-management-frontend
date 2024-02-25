@@ -8,6 +8,7 @@ import FormInput from "@/components/Forms/FormInput";
 import { useUserLoginMutation } from "@/redux/api/authApi";
 import { useRouter } from "next/navigation";
 import { storeUserInfo } from "@/services/auth.service";
+import Link from "next/link";
 
 type FormValues = {
   id: string;
@@ -19,7 +20,7 @@ const LoginPage = () => {
   const router = useRouter();
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     try {
-      const res:any = await userLogin({ ...data }).unwrap();
+      const res: any = await userLogin({ ...data }).unwrap();
       if (res?.accessToken) {
         router.push("/profile");
         message.success("User logged in successfully!");
@@ -71,6 +72,17 @@ const LoginPage = () => {
                 label="User Password"
                 placeholder="Enter Password"
               />
+            </div>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                margin: "5px 0px",
+              }}
+            >
+              <div style={{ marginLeft: "auto" }}>
+                <Link href="/forgot-password">Forgot password?</Link>
+              </div>
             </div>
             <Button type="primary" htmlType="submit">
               Login

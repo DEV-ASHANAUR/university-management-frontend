@@ -29,7 +29,7 @@ export const axiosBaseQuery =
         headers: {
           "Content-Type": contentType || "application/json",
         },
-        // withCredentials: true,
+        withCredentials: true,
       });
       // console.log("result",result)
       return result;
